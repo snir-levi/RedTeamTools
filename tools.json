@@ -1,0 +1,33 @@
+{
+	"root":
+	{
+		"External":
+			[
+			"https://github.com/aboul3la/Sublist3r",
+			"https://github.com/EnableSecurity/wafw00f",
+			{
+			"Install" : ["sudo python {}/wafw00f/setup.py install"]
+			}
+			],
+		"Internal":
+			[
+				"https://github.com/lgandx/Responder",
+				"https://github.com/nidem/kerberoast",
+				"https://github.com/EmpireProject/Empire",
+				"https://github.com/BloodHoundAD/BloodHound",
+				"https://github.com/SecureAuthCorp/impacket",
+				"https://github.com/byt3bl33d3r/CrackMapExec",
+				{ 
+				"Install" : [
+					"pip install pycryptodome",
+					"{}/Empire/setup/install.sh -f"
+					]
+				}
+			],
+		"Cloud":
+			[
+				"https://github.com/RhinoSecurityLabs/pacu"
+			]
+	}
+	
+}
