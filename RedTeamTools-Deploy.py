@@ -21,11 +21,15 @@ def deploy(toolinfo,path):
 		cmd = toolinfo["install"]
 		install_tool(cmd,toolpath)
 
+
+def get_dependencies():
+	os.system("curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py")
+	os.system("python get-pip.py")
+
 def read_json():
 	with open('tools.json') as json_file:
 		return json.load(json_file)
 
-tools_list = read_json()
 
 def parse_folders(folders,folderpath):
 	for subfolder in folders:
@@ -39,8 +43,11 @@ def parse_folders(folders,folderpath):
 
 
 rootpath = os.getcwd()
+
  
 if os.geteuid()==0:
+	tools_list = read_json()
+	get_dependencies()
 	parse_folders(tools_list["root"],"")
 else:
   print "You must run the script as root"
