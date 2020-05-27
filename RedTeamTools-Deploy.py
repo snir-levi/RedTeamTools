@@ -1,20 +1,25 @@
 import os
 import json
 
-rootpath = "Tools"
 
 def clone_tool(url, toolpath):
-	name = url.split('/')[-1]
-	toolpath = rootpath + toolpath + "/"+name
 	if os.path.exists(toolpath):
 		return
-	print toolpath
 	os.system("git clone " + url + " " + toolpath)
 
 def install_tool(cmd,path):
-	toolpath = rootpath + path
-	os.system(cmd.format(toolpath))
+	os.chdir(path)
+	os.system(cmd.format(path))
+	os.chdir(rootpath)
 
+def deploy(toolinfo,path):
+	name = toolinfo["url"].split('/')[-1]
+	toolpath = path + "/"+name
+	url = toolinfo["url"]
+	clone_tool(url,toolpath)
+	if "install" in toolinfo:
+		cmd = toolinfo["install"]
+		install_tool(cmd,toolpath)
 
 def read_json():
 	with open('tools.json') as json_file:
@@ -24,15 +29,18 @@ tools_list = read_json()
 
 def parse_folders(folders,folderpath):
 	for subfolder in folders:
-		if isinstance(folders[subfolder],dict):
-			parse_folders(folders[subfolder], folderpath + "/" + subfolder)
-		else:
-			toolpath = folderpath + "/" + subfolder
+		if isinstance(folders[subfolder],list):
 			for tool in folders[subfolder]:
-				if isinstance(tool,dict):
-					for cmd in tool["Install"]:
-						install_tool(cmd,toolpath)
-					continue
-				clone_tool(tool,toolpath)
+				toolpath = folderpath + "/" + subfolder 
+				toolpath = toolpath[1:]
+				deploy(tool,toolpath)
+		else:
+			parse_folders(folders[subfolder], folderpath + "/" + subfolder)
 
-parse_folders(tools_list["root"],"")
+
+rootpath = os.getcwd()
+ 
+if os.geteuid()==0:
+	parse_folders(tools_list["root"],"")
+else:
+  print "You must run the script as root"
