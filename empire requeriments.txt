@@ -1,0 +1,1 @@
+sudo apt-get install libssl-dev swig python3-dev gcc
